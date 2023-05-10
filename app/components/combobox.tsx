@@ -15,15 +15,18 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "~/components/ui/popover";
-import type { Genre } from "~/@types/gen";
 
 interface Props {
-  items: Pick<Genre, "id" | "name">[];
+  items: {
+    id: string;
+    name: string;
+  }[];
   value: string;
   setValue: (value: string) => void;
+  label: string;
 }
 
-export function GenreCombobox({ items, value, setValue }: Props) {
+export function Combobox({ items, value, setValue, label }: Props) {
   const [open, setOpen] = React.useState(false);
 
   return (
@@ -39,14 +42,13 @@ export function GenreCombobox({ items, value, setValue }: Props) {
             ? items.find(
                 (item) => item.name.toLowerCase() === value.toLowerCase()
               )?.name
-            : "Select genre..."}
+            : `Select ${label}...`}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command>
-          <CommandInput placeholder="Search framework..." />
-          <CommandEmpty>No framework found.</CommandEmpty>
+          <CommandInput placeholder={`Search ${label}...`} />
           <CommandGroup>
             <CommandItem
               value={""}

@@ -2,7 +2,7 @@ import type { V2_MetaFunction, LoaderArgs } from "@remix-run/cloudflare";
 import { useFetcher, useLoaderData } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import type { Movie } from "~/@types/gen";
-import { GenreCombobox } from "~/components/combobox";
+import { Combobox } from "~/components/combobox";
 import { MovieCard } from "~/components/movies/MovieCard";
 import { getClient } from "~/graphql/client.server";
 
@@ -42,7 +42,7 @@ export default function Index() {
     <section className="w-full max-w-7xl">
       <div className="mb-4 flex items-center gap-4">
         <p className="font-bold">Filter by genre:</p>
-        <GenreCombobox items={genres} value={filter} setValue={setFilter} />
+        <Combobox label="genre" items={genres} value={filter} setValue={setFilter} />
       </div>
       <ul className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
         {fetcher.data &&
