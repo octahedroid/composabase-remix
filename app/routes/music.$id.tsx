@@ -73,7 +73,7 @@ export default function AlbumUpdate() {
   const fetcher = useFetcher();
 
   return (
-    <main className="flex flex-col gap-8 items-center w-full">
+    <div className="flex flex-col gap-8 items-center w-full">
       <Form
         schema={updateAlbumSchema}
         className="space-y-4 w-full max-w-2xl"
@@ -149,6 +149,6 @@ export default function AlbumUpdate() {
       >
         Delete
       </Button>
-    </main>
+    </div>
   );
 }

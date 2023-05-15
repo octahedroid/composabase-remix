@@ -3,6 +3,7 @@ import { useLoaderData } from "@remix-run/react";
 import { useMemo, useState } from "react";
 import { Combobox } from "~/components/combobox";
 import { AlbumCard } from "~/components/music/AlbumCard";
+import { AlbumFragment } from "~/graphql/Music/fragments.server";
 import { getClient } from "~/graphql/client.server";
 
 export const meta: V2_MetaFunction = () => {
@@ -28,16 +29,7 @@ export const loader = async ({ context }: LoaderArgs) => {
             },
           ],
         },
-        id: true,
-        label: true,
-        name: true,
-        artist: {
-          name: true,
-        },
-        year: true,
-        genre: {
-          name: true,
-        },
+        ...AlbumFragment,
       },
     },
   });
@@ -66,8 +58,8 @@ export default function Index() {
   }, [albums, filterByGenre, filterByYear]);
 
   return (
-    <main className="flex justify-center w-full py-4">
-      <section className="w-full max-w-7xl">
+    // <main className="flex justify-center w-full py-4">
+      <section className="w-full max-w-7xl ">
         <div className="mb-4 flex gap-4 px-4">
           <p className="text-2xl font-bold">Filter by genre:</p>
           <Combobox
@@ -92,6 +84,6 @@ export default function Index() {
           ))}
         </ul>
       </section>
-    </main>
+    // </main>
   );
 }

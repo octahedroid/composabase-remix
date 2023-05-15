@@ -40,7 +40,7 @@ export default function MusicAdd() {
   const { genres } = useLoaderData<typeof loader>();
 
   return (
-    <main className="flex justify-center w-full">
+    <div className="flex justify-center w-full">
       <Form
         schema={createMovieSchema}
         className="space-y-4 w-full max-w-2xl"
@@ -94,6 +94,6 @@ export default function MusicAdd() {
           );
         }}
       </Form>
-    </main>
+    </div>
   );
 }
