@@ -19,6 +19,26 @@ export function Navbar() {
   return (
     <nav className={cn("pb-12")}>
       <div className="space-y-4 py-4">
+      <div className="px-4 py-2">
+          <h2 className="mb-2 px-2 text-lg font-semibold tracking-tight">
+            Remix
+          </h2>
+          <ul className="space-y-1">
+            <li>
+              <Button
+                variant={pathname === "/" ? "secondary" : "ghost"}
+                size="sm"
+                className="w-full justify-start"
+                asChild
+              >
+                <Link to={"/"}>
+                  <Library className="mr-2 h-4 w-4" />
+                  Remix List
+                </Link>
+              </Button>
+            </li>
+          </ul>
+        </div>
         <div className="px-4 py-2">
           <h2 className="mb-2 px-2 text-lg font-semibold tracking-tight">
             Music
@@ -33,7 +53,7 @@ export function Navbar() {
               >
                 <Link to={"/music"}>
                   <Library className="mr-2 h-4 w-4" />
-                  Album List
+                  Music List
                 </Link>
               </Button>
             </li>

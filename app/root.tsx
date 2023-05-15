@@ -28,12 +28,12 @@ export default function App() {
         <Links />
       </head>
       <body className="font-sans">
-        <main className="grid grid-cols-5">
+        <div className="grid grid-cols-5">
           <Navbar />
-          <section className="col-span-5 md:col-span-4">
+          <main className="col-span-5 md:col-span-4">
             <Outlet />
-          </section>
-        </main>
+          </main>
+        </div>
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
