@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 
-import { cn } from "~/lib/utils";
+import { cn, years } from "~/lib/utils";
 import { Button } from "~/components/ui/button";
 import {
   Command,
@@ -17,24 +17,13 @@ import {
 import { useSearchParams } from "@remix-run/react";
 
 interface Props {
-  value: string;
+  value: string | null;
+  allowEmpty?: boolean;
 }
 
-export function YearCombobox({ value }: Props) {
-  const items = [
-    "1990",
-    "1991",
-    "1992",
-    "1993",
-    "1994",
-    "1995",
-    "1996",
-    "1997",
-    "1998",
-    "1999",
-  ];
-  const [open, setOpen] = React.useState(false);
+export function YearCombobox({ value, allowEmpty = false }: Props) {
 
+  const [open, setOpen] = React.useState(false);
   const [, setSearchParams] = useSearchParams();
 
   return (
@@ -46,7 +35,7 @@ export function YearCombobox({ value }: Props) {
           aria-expanded={open}
           className="w-[200px] justify-between"
         >
-          {value ? items.find((item) => item === value) : `Select year...`}
+          {value ? years.find((item) => item === value) : `Select year...`}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -54,7 +43,28 @@ export function YearCombobox({ value }: Props) {
         <Command>
           <CommandInput placeholder={`Search year...`} />
           <CommandGroup>
-            {items.map((item) => (
+          {allowEmpty &&
+            <CommandItem
+                value={""}
+                onSelect={() => {
+                  setSearchParams((params: URLSearchParams) => {
+                    params.delete('year');
+                    return params;
+                  });
+                  setOpen(false);
+                }}
+              >
+                <Check
+                  className={cn(
+                    "mr-2 h-4 w-4",
+                    value === null ? "opacity-100" : "opacity-0"
+                  )}
+                />
+                All
+              </CommandItem>
+            }
+
+            {years.map((item) => (
               <CommandItem
                 key={item}
                 value={item}
@@ -70,7 +80,7 @@ export function YearCombobox({ value }: Props) {
                 <Check
                   className={cn(
                     "mr-2 h-4 w-4",
-                    value.toLocaleLowerCase() === item
+                    value === item
                       ? "opacity-100"
                       : "opacity-0"
                   )}

@@ -11,10 +11,9 @@ import { updateMovieSchema } from "~/graphql/Movies/schema";
 import { getClient } from "~/graphql/client.server";
 
 export const loader = async ({ params, context }: LoaderArgs) => {
-  const client = await getClient(context);
-
   if (!params.id) throw redirect("/movies");
 
+  const client = getClient(context);
   const {
     movies: { findManyGenre: genres, findFirstMovie: movie },
   } = await client.query({
@@ -104,7 +103,8 @@ export default function MovieUpdate() {
                   <Fragment>
                     <Label />
                     <SelectInput
-                      label={label}
+                      label={`Movie`}
+                      value={movie.genre.id}
                       options={options}
                       setValueChange={(value) =>
                         setValue("genre", value, {
