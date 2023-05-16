@@ -6,6 +6,8 @@ import { YearCombobox } from "~/components/years";
 import { AlbumCard } from "~/components/music/AlbumCard";
 import { AlbumFragment } from "~/graphql/Music/fragments.server";
 import { getClient } from "~/graphql/client.server";
+import { Card, CardHeader } from "~/components/ui/card";
+import { Disc } from "lucide-react";
 
 export const meta: V2_MetaFunction = () => {
   return [{ title: "New Remix App" }];
@@ -28,8 +30,8 @@ export const loader = async ({ request, context }: LoaderArgs) => {
           orderBy: [
             {
               name: "asc",
-            }
-          ]
+            },
+          ],
         },
         id: true,
         name: true,
@@ -47,8 +49,8 @@ export const loader = async ({ request, context }: LoaderArgs) => {
           where: {
             year: year
               ? {
-                equals: parseInt(year),
-              }
+                  equals: parseInt(year),
+                }
               : undefined,
             genre: genre
               ? {
@@ -79,11 +81,20 @@ export default function Index() {
         <YearCombobox value={year} allowEmpty={true} />
       </div>
       <ul className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-        {albums.map((album) => (
-          <li key={album.id}>
-            <AlbumCard {...album} />
-          </li>
-        ))}
+        {albums.length > 0 ? (
+          albums.map((album) => (
+            <li key={album.id}>
+              <AlbumCard {...album} />
+            </li>
+          ))
+        ) : (
+          <Card className="w-full col-span-full">
+            <CardHeader className="flex flex-col justify-center items-center">
+              <Disc className="w-16 h-16" />
+              <h2 className="text-2xl font-bold">No albums found</h2>
+            </CardHeader>
+          </Card>
+        )}
       </ul>
     </section>
   );

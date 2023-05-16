@@ -1,8 +1,6 @@
 import { z } from "zod";
 
 export const createAlbumSchema = z.object({
-  artists: z.string().optional(),
-  genres: z.string().optional(),
   years: z.string().optional(),
   name: z.string().min(1).max(255),
   artist: z.string().min(1).max(255),

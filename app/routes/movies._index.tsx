@@ -1,8 +1,10 @@
 import type { V2_MetaFunction, LoaderArgs } from "@remix-run/cloudflare";
 import { useLoaderData } from "@remix-run/react";
+import { Clapperboard } from "lucide-react";
 
 import { GenreCombobox } from "~/components/genres";
 import { MovieCard } from "~/components/movies/MovieCard";
+import { Card, CardHeader } from "~/components/ui/card";
 import { YearCombobox } from "~/components/years";
 import { MovieFragment } from "~/graphql/Movies/fragments.server";
 import { getClient } from "~/graphql/client.server";
@@ -28,8 +30,8 @@ export const loader = async ({ context, request }: LoaderArgs) => {
           orderBy: [
             {
               name: "asc",
-            }
-          ]
+            },
+          ],
         },
         id: true,
         name: true,
@@ -45,10 +47,10 @@ export const loader = async ({ context, request }: LoaderArgs) => {
             },
           ],
           where: {
-            year: year 
+            year: year
               ? {
-                equals: parseInt(year),
-              } 
+                  equals: parseInt(year),
+                }
               : undefined,
             genre: genre
               ? {
@@ -79,11 +81,20 @@ export default function Index() {
         <YearCombobox value={year} allowEmpty={true} />
       </div>
       <ul className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-        {movies.map((movie) => (
-          <li key={movie.id}>
-            <MovieCard {...movie} />
-          </li>
-        ))}
+        {movies.length > 0 ? (
+          movies.map((movie) => (
+            <li key={movie.id}>
+              <MovieCard {...movie} />
+            </li>
+          ))
+        ) : (
+          <Card className="w-full col-span-full">
+            <CardHeader className="flex flex-col justify-center items-center">
+              <Clapperboard className="w-16 h-16" />
+              <h2 className="text-2xl font-bold">No movies found</h2>
+            </CardHeader>
+          </Card>
+        )}
       </ul>
     </section>
   );

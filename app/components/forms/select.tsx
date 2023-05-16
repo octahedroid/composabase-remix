@@ -8,7 +8,7 @@ import {
 } from "~/components/ui/select";
 interface Props {
   label: string | undefined;
-  value: string | number;
+  value?: string | number;
   options?: {
     name: string;
     value: string | number | readonly string[];
