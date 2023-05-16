@@ -9,6 +9,7 @@ import { Button } from "~/components/ui/button";
 import { updateMovieMutation } from "~/graphql/Movies/mutations.server";
 import { updateMovieSchema } from "~/graphql/Movies/schema";
 import { getClient } from "~/graphql/client.server";
+import { years } from "~/lib/utils";
 
 export const loader = async ({ params, context }: LoaderArgs) => {
   if (!params.id) throw redirect("/movies");
@@ -37,6 +38,13 @@ export const loader = async ({ params, context }: LoaderArgs) => {
         },
       },
       findManyGenre: {
+        __args: {
+          orderBy: [
+            {
+              name: "asc",
+            },
+          ],
+        },
         id: true,
         name: true,
       },
@@ -79,6 +87,10 @@ export default function MovieUpdate() {
             name: genre.name,
             value: genre.id,
           })),
+          year: years.map((year) => ({
+            name: year,
+            value: year,
+          })),
         }}
         multiline={["synopsis"]}
         values={{
@@ -97,6 +109,7 @@ export default function MovieUpdate() {
               <Field name="id" hidden />
               <Field name="title" label="Title" />
               <Field name="genre" hidden />
+              <Field name="year" hidden />
               <Field name="director" />
               <Field name="genre" label="Genre">
                 {({ options, label, Label, Error, value }) => (
@@ -118,7 +131,26 @@ export default function MovieUpdate() {
                   </Fragment>
                 )}
               </Field>
-              <Field name="year" label="Release Year" />
+              <Field name="year" label="Release Year">
+                {({ options, Label, Error }) => (
+                  <Fragment>
+                    <Label />
+                    <SelectInput
+                      label="Year"
+                      value={String(movie.year)}
+                      options={options}
+                      setValueChange={(value) =>
+                        setValue("year", Number(value), {
+                          shouldValidate: false,
+                          shouldDirty: false,
+                          shouldTouch: false,
+                        })
+                      }
+                    />
+                    <Error />
+                  </Fragment>
+                )}
+              </Field>
               <Field name="synopsis" label="Synopsis" />
               <Field name="cast" label="Cast" />
               <Errors />

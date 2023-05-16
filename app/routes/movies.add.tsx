@@ -7,6 +7,7 @@ import { SelectInput } from "~/components/forms/select";
 import { createMovieMutation } from "~/graphql/Movies/mutations.server";
 import { createMovieSchema } from "~/graphql/Movies/schema";
 import { getClient } from "~/graphql/client.server";
+import { years } from "~/lib/utils";
 
 export const loader = async ({ request, context }: LoaderArgs) => {
   const client = await getClient(context);
@@ -16,6 +17,13 @@ export const loader = async ({ request, context }: LoaderArgs) => {
   } = await client.query({
     movies: {
       findManyGenre: {
+        __args: {
+          orderBy: [
+            {
+              name: "asc",
+            },
+          ],
+        },
         id: true,
         name: true,
       },
@@ -50,6 +58,10 @@ export default function MusicAdd() {
             name: genre.name,
             value: genre.id,
           })),
+          year: years.map((year) => ({
+            name: year,
+            value: year,
+          })),
         }}
         multiline={["synopsis"]}
       >
@@ -57,6 +69,7 @@ export default function MusicAdd() {
           return (
             <Fragment>
               <Field name="title" label="Title" />
+              <Field name="year" hidden />
               <Field name="genre" hidden />
               <Field name="director" />
               <Field name="genre" label="Genre">
@@ -78,7 +91,25 @@ export default function MusicAdd() {
                   </Fragment>
                 )}
               </Field>
-              <Field name="year" label="Release Year" />
+              <Field name="year" label="Release Year">
+                {({ options, Label, Error }) => (
+                  <Fragment>
+                    <Label />
+                    <SelectInput
+                      label={`Year`}
+                      options={options}
+                      setValueChange={(value) =>
+                        setValue("year", Number(value), {
+                          shouldValidate: false,
+                          shouldDirty: false,
+                          shouldTouch: false,
+                        })
+                      }
+                    />
+                    <Error />
+                  </Fragment>
+                )}
+              </Field>
               <Field name="synopsis" label="Synopsis" />
               <Field name="cast" label="Cast" />
               <Errors />

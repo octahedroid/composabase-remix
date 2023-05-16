@@ -8,6 +8,7 @@ import { SelectInput } from "~/components/forms/select";
 import { createAlbumMutation } from "~/graphql/Music/mutations.server";
 import { createAlbumSchema } from "~/graphql/Music/schema";
 import { getClient } from "~/graphql/client.server";
+import { years } from "~/lib/utils";
 
 export const loader = async ({ request, context }: LoaderArgs) => {
   const client = await getClient(context);
@@ -17,10 +18,24 @@ export const loader = async ({ request, context }: LoaderArgs) => {
   } = await client.query({
     music: {
       findManyArtist: {
+        __args: {
+          orderBy: [
+            {
+              name: "asc",
+            },
+          ],
+        },
         id: true,
         name: true,
       },
       findManyGenre: {
+        __args: {
+          orderBy: [
+            {
+              name: "asc",
+            },
+          ],
+        },
         id: true,
         name: true,
       },
@@ -60,6 +75,10 @@ export default function MusicAdd() {
             name: artist.name,
             value: artist.id,
           })),
+          year: years.map((year) => ({
+            name: year,
+            value: year,
+          })),
         }}
       >
         {({ Field, Errors, Button, setValue, submit }) => {
@@ -68,6 +87,7 @@ export default function MusicAdd() {
               <Field name="name" label="Name" />
               <Field name="artist" hidden />
               <Field name="genre" hidden />
+              <Field name="year" hidden />
               <Field name="artist" label="Artist">
                 {({ options, Label, Error }) => (
                   <Fragment>
@@ -106,7 +126,25 @@ export default function MusicAdd() {
                   </Fragment>
                 )}
               </Field>
-              <Field name="year" label="Release Year" />
+              <Field name="year" label="Release Year">
+                {({ options, Label, Error }) => (
+                  <Fragment>
+                    <Label />
+                    <SelectInput
+                      label={`Year`}
+                      options={options}
+                      setValueChange={(value) =>
+                        setValue("year", Number(value), {
+                          shouldValidate: false,
+                          shouldDirty: false,
+                          shouldTouch: false,
+                        })
+                      }
+                    />
+                    <Error />
+                  </Fragment>
+                )}
+              </Field>
               <Field name="recordLabel" label="Record Label" />
               <Errors />
               <Button className="w-full">Save</Button>
