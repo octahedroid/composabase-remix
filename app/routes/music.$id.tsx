@@ -8,7 +8,6 @@ import { Form } from "~/components/forms/form";
 import { formAction } from "~/components/forms/form.action";
 import { SelectInput } from "~/components/forms/select";
 import { ComboboxInput } from "~/components/forms/combobox";
-import { YearCombobox } from "~/components/years";
 import { Button } from "~/components/ui/button";
 import { years } from "~/lib/utils";
 import { updateAlbumMutation } from "~/graphql/Music/mutations.server";
@@ -20,7 +19,11 @@ export const loader = async ({ params, context }: LoaderArgs) => {
 
   const client = getClient(context);
   const {
-    music: { findFirstAlbum: album, findManyGenre: genres, findManyArtist: artists },
+    music: {
+      findFirstAlbum: album,
+      findManyGenre: genres,
+      findManyArtist: artists,
+    },
   } = await client.query({
     music: {
       findFirstAlbum: {
@@ -51,7 +54,7 @@ export const loader = async ({ params, context }: LoaderArgs) => {
             {
               name: "asc",
             },
-          ]
+          ],
         },
         id: true,
         name: true,
@@ -62,7 +65,7 @@ export const loader = async ({ params, context }: LoaderArgs) => {
             {
               name: "asc",
             },
-          ]
+          ],
         },
         id: true,
         name: true,
@@ -102,11 +105,11 @@ export default function AlbumUpdate() {
         className="space-y-4 w-full max-w-2xl"
         method="post"
         options={{
-          artists: artists.map((artist) => ({
+          artist: artists.map((artist) => ({
             name: artist.name,
             value: artist.id,
           })),
-          genres: genres.map((genre) => ({
+          genre: genres.map((genre) => ({
             name: genre.name,
             value: genre.id,
           })),
@@ -116,6 +119,7 @@ export default function AlbumUpdate() {
           })),
         }}
         values={{
+          id,
           name: album.name,
           artist: album.artist.id,
           genre: album.genre.id,
@@ -126,16 +130,17 @@ export default function AlbumUpdate() {
         {({ Field, Errors, Button, setValue, submit }) => {
           return (
             <Fragment>
+              <Field name="id" hidden />
               <Field name="name" label="Name" />
-              <Field name="artist" hidden />
               <Field name="genre" hidden />
+              <Field name="artist" hidden />
               <Field name="year" hidden />
-              <Field name="artists" label="Artist">
+              <Field name="artist" label="Artist">
                 {({ options, Label, Error }) => (
                   <Fragment>
                     <Label />
                     <ComboboxInput
-                      label={`Artist`}
+                      label="Artist"
                       value={album.artist.id}
                       options={options}
                       setValueChange={(value) =>
@@ -150,7 +155,7 @@ export default function AlbumUpdate() {
                   </Fragment>
                 )}
               </Field>
-              <Field name="genres" label="Genre">
+              <Field name="genre" label="Genre">
                 {({ options, Label, Error }) => (
                   <Fragment>
                     <Label />
@@ -158,7 +163,7 @@ export default function AlbumUpdate() {
                       label={`Genre`}
                       value={album.genre.id}
                       options={options}
-                      setValueChange={(value) => 
+                      setValueChange={(value) =>
                         setValue("genre", value, {
                           shouldValidate: false,
                           shouldDirty: false,
@@ -178,7 +183,7 @@ export default function AlbumUpdate() {
                       label={`Year`}
                       value={String(album.year)}
                       options={options}
-                      setValueChange={(value) => 
+                      setValueChange={(value) =>
                         setValue("year", Number(value), {
                           shouldValidate: false,
                           shouldDirty: false,

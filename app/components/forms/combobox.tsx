@@ -23,7 +23,7 @@ interface Props {
     name: string;
     value: string | number | readonly string[];
   }[];
-  value: string;
+  value?: string;
   setValueChange: (value: string) => void;
   label?: string;
 }
@@ -39,9 +39,9 @@ export function ComboboxInput({ options, value, setValueChange, label }: Props) 
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] justify-between"
+          className="w-full justify-between"
         >
-          {selected ? options?.find((item) => item.value === selected)?.name : `Select ${label}...}`}
+          {selected ? options?.find((item) => item.value === selected)?.name : `Select ${label}...`}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>

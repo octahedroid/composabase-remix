@@ -18,23 +18,6 @@ export const createAlbumMutation = makeDomainFunction(
     const client = await getClient({ GRAPHQL_AUTH, GRAPHQL_ENDPOINT });
 
     const {
-      music: { findFirstArtist },
-    } = await client.query({
-      music: {
-        findFirstArtist: {
-          __args: {
-            where: {
-              name: {
-                equals: artist,
-              },
-            },
-          },
-          name: true,
-        },
-      },
-    });
-
-    const {
       music: { createOneAlbum },
     } = await client.mutation({
       music: {
@@ -42,13 +25,8 @@ export const createAlbumMutation = makeDomainFunction(
           __args: {
             data: {
               artist: {
-                connectOrCreate: {
-                  where: {
-                    name: findFirstArtist?.name || artist,
-                  },
-                  create: {
-                    name: artist,
-                  },
+                connect: {
+                  id: artist,
                 },
               },
               genre: {
