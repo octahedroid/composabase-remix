@@ -17,12 +17,14 @@ import {
 import { useSearchParams } from "@remix-run/react";
 
 interface Props {
-  items: string[];
-  value: string;
-  label: string;
+  items: {
+    id: string;
+    name: string;
+  }[];
+  value: string | null;
 }
 
-export function Combobox({ items, value, label }: Props) {
+export function GenreCombobox({ items, value }: Props) {
   const [open, setOpen] = React.useState(false);
   const [, setSearchParams] = useSearchParams();
 
@@ -35,19 +37,19 @@ export function Combobox({ items, value, label }: Props) {
           aria-expanded={open}
           className="w-[200px] justify-between"
         >
-          {value ? items.find((item) => item === value) : `Select ${label}...`}
+          {value ? items.find((item) => item.id === value)?.name : `Select genre...`}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command>
-          <CommandInput placeholder={`Search ${label}...`} />
+          <CommandInput placeholder={`Search genre...`} />
           <CommandGroup>
             <CommandItem
               value={""}
               onSelect={() => {
                 setSearchParams((params: URLSearchParams) => {
-                  params.delete(label);
+                  params.delete('genre');
                   return params;
                 });
                 setOpen(false);
@@ -56,19 +58,19 @@ export function Combobox({ items, value, label }: Props) {
               <Check
                 className={cn(
                   "mr-2 h-4 w-4",
-                  value === "" ? "opacity-100" : "opacity-0"
+                  value === null ? "opacity-100" : "opacity-0"
                 )}
               />
               All
             </CommandItem>
             {items.map((item) => (
               <CommandItem
-                key={item}
-                value={item}
+                key={item.id}
+                value={item.id}
                 onSelect={(currentValue) => {
                   const parameter = encodeURIComponent(currentValue);
                   setSearchParams((params: URLSearchParams) => {
-                    params.set(label, parameter);
+                    params.set('genre', parameter);
                     return params;
                   });
                   setOpen(false);
@@ -77,12 +79,12 @@ export function Combobox({ items, value, label }: Props) {
                 <Check
                   className={cn(
                     "mr-2 h-4 w-4",
-                    value.toLocaleLowerCase() === item.toLocaleLowerCase()
+                    value === item.id
                       ? "opacity-100"
                       : "opacity-0"
                   )}
                 />
-                {item}
+                {item.name}
               </CommandItem>
             ))}
           </CommandGroup>

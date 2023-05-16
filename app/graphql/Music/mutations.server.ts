@@ -12,7 +12,7 @@ export const createAlbumMutation = makeDomainFunction(
   environmentSchema
 )(
   async (
-    { name, artist, genres, recordLabel, year },
+    { name, artist, genre, recordLabel, year },
     { GRAPHQL_AUTH, GRAPHQL_ENDPOINT }
   ) => {
     const client = await getClient({ GRAPHQL_AUTH, GRAPHQL_ENDPOINT });
@@ -53,7 +53,7 @@ export const createAlbumMutation = makeDomainFunction(
               },
               genre: {
                 connect: {
-                  id: genres,
+                  id: genre,
                 },
               },
               name,
@@ -78,27 +78,10 @@ export const updateAlbumMutation = makeDomainFunction(
   environmentSchema
 )(
   async (
-    { id, name, artist, genres, recordLabel, year },
+    { id, name, artist, genre, recordLabel, year },
     { GRAPHQL_AUTH, GRAPHQL_ENDPOINT }
   ) => {
-    const client = await getClient({ GRAPHQL_AUTH, GRAPHQL_ENDPOINT });
-
-    const {
-      music: { findFirstArtist },
-    } = await client.query({
-      music: {
-        findFirstArtist: {
-          __args: {
-            where: {
-              name: {
-                equals: artist,
-              },
-            },
-          },
-          name: true,
-        },
-      },
-    });
+    const client = getClient({ GRAPHQL_AUTH, GRAPHQL_ENDPOINT });
 
     const {
       music: { updateOneAlbum },
@@ -111,18 +94,13 @@ export const updateAlbumMutation = makeDomainFunction(
             },
             data: {
               artist: {
-                connectOrCreate: {
-                  where: {
-                    name: findFirstArtist?.name || artist,
-                  },
-                  create: {
-                    name: artist,
-                  },
+                connect: {
+                  id: artist,
                 },
               },
               genre: {
                 connect: {
-                  id: genres,
+                  id: genre,
                 },
               },
               name: {

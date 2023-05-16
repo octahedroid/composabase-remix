@@ -1,7 +1,8 @@
-import { Check, ChevronsUpDown } from "lucide-react";
+import React from "react";
+import { useState } from "react";
 
+import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "~/lib/utils";
-import { Button } from "~/components/ui/button";
 import {
   Command,
   CommandEmpty,
@@ -14,8 +15,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "~/components/ui/popover";
-import { useState } from "react";
-import { Input } from "../ui/input";
+
+import { Button } from "../ui/button";
 
 interface Props {
   options?: {
@@ -23,17 +24,28 @@ interface Props {
     value: string | number | readonly string[];
   }[];
   value: string;
-  setValue: (value: string) => void;
+  setValueChange: (value: string) => void;
   label?: string;
 }
 
-export function ComboboxInput({ options, value, setValue, label }: Props) {
+export function ComboboxInput({ options, value, setValueChange, label }: Props) {
   const [open, setOpen] = useState(false);
+  const [selected, setSelected] = React.useState(value)
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Input value={value} onChange={(e) => setValue(e.target.value)} />
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className="w-[200px] justify-between"
+        >
+          {selected ? options?.find((item) => item.value === selected)?.name : `Select ${label}...}`}
+          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+        </Button>
       </PopoverTrigger>
+
       <PopoverContent
         align="start"
         className="w-[500px] h-[400px] overflow-y-scroll p-0"
@@ -42,35 +54,21 @@ export function ComboboxInput({ options, value, setValue, label }: Props) {
           <CommandInput placeholder={label} />
           <CommandEmpty>Not found.</CommandEmpty>
           <CommandGroup>
-            <CommandItem
-              value={""}
-              onSelect={() => {
-                setValue("");
-                setOpen(false);
-              }}
-            >
-              <Check
-                className={cn(
-                  "mr-2 h-4 w-4",
-                  value === "" ? "opacity-100" : "opacity-0"
-                )}
-              />
-              {label}
-            </CommandItem>
-            {options?.map((option) => (
+            {options?.filter((option) => {return option.name !== ""}).map((option) => (
               <CommandItem
-                key={option.name as string}
-                value={option.name}
+                key={option.value as string}
+                value={option.name as string}
                 onSelect={(currentValue) => {
-                  setValue(currentValue === value ? "" : currentValue);
+                  const selectedValue = options?.find((item) => item.name.toLocaleLowerCase() === currentValue)?.value as string
+                  setSelected(selectedValue);
+                  setValueChange(selectedValue);
                   setOpen(false);
                 }}
               >
                 <Check
                   className={cn(
                     "mr-2 h-4 w-4",
-                    value.toLocaleLowerCase() ===
-                      option.name.toLocaleLowerCase()
+                    selected === option.value
                       ? "opacity-100"
                       : "opacity-0"
                   )}

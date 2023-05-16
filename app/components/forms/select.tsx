@@ -3,12 +3,12 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "~/components/ui/select";
 interface Props {
-  label?: string;
+  label: string | undefined;
+  value: string | number;
   options?: {
     name: string;
     value: string | number | readonly string[];
@@ -16,16 +16,16 @@ interface Props {
   setValueChange: (value: string) => void;
 }
 
-export const SelectInput = ({ label, options, setValueChange }: Props) => {
+export const SelectInput = ({ label, value, options, setValueChange }: Props) => {
+
   return (
-    <Select onValueChange={setValueChange}>
+    <Select onValueChange={setValueChange} defaultValue={value as string}>
       <SelectTrigger className="w-full">
-        <SelectValue placeholder={label} />
+        <SelectValue placeholder={`Select ${label} ...`} />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          <SelectLabel>{label}</SelectLabel>
-          {options?.map((option) => (
+          {options?.filter((option) => {return option.name !== ""}).map((option) => (
             <SelectItem
               key={option.value as string}
               value={option.value as string}

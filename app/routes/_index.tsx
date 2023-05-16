@@ -12,9 +12,7 @@ import { MovieFragment } from "~/graphql/Movies/fragments.server";
 export const loader = async ({ request, context }: LoaderArgs) => {
   const url = new URL(request.url);
   const year = url.searchParams.get("year") || "1990";
-
   const client = getClient(context);
-
   const {
     music: { findManyAlbum },
     movies: { findManyMovie },
@@ -29,8 +27,8 @@ export const loader = async ({ request, context }: LoaderArgs) => {
           },
           orderBy: [
             {
-              year: "asc",
-            },
+              name: "asc",
+            }
           ],
         },
         ...AlbumFragment,
@@ -46,8 +44,8 @@ export const loader = async ({ request, context }: LoaderArgs) => {
           },
           orderBy: [
             {
-              year: "asc",
-            },
+              title: "asc",
+            }
           ],
         },
         ...MovieFragment,
@@ -65,7 +63,7 @@ export default function Index() {
     <div className="flex flex-col justify-center w-full py-4">
       <h1 className="text-2xl">Remix</h1>
       <section className="w-full max-w-7xl">
-        <div className="mb-4 flex items-center gap-4 px-4">
+        <div className="mb-4 flex gap-4 px-4">
           <p className="ml-auto text-2xl font-bold">Filter by year:</p>
           <YearCombobox value={year} />
         </div>

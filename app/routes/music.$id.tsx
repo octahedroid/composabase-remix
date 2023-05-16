@@ -1,22 +1,26 @@
+import { Fragment } from "react";
+
 import type { ActionArgs, LoaderArgs } from "@remix-run/cloudflare";
 import { redirect } from "@remix-run/cloudflare";
 import { useFetcher, useLoaderData } from "@remix-run/react";
-import { Fragment } from "react";
+
 import { Form } from "~/components/forms/form";
 import { formAction } from "~/components/forms/form.action";
 import { SelectInput } from "~/components/forms/select";
+import { ComboboxInput } from "~/components/forms/combobox";
+import { YearCombobox } from "~/components/years";
 import { Button } from "~/components/ui/button";
+import { years } from "~/lib/utils";
 import { updateAlbumMutation } from "~/graphql/Music/mutations.server";
 import { updateAlbumSchema } from "~/graphql/Music/schema";
 import { getClient } from "~/graphql/client.server";
 
 export const loader = async ({ params, context }: LoaderArgs) => {
-  const client = await getClient(context);
-
   if (!params.id) throw redirect("/music");
 
+  const client = getClient(context);
   const {
-    music: { findManyGenre: genres, findFirstAlbum: album },
+    music: { findFirstAlbum: album, findManyGenre: genres, findManyArtist: artists },
   } = await client.query({
     music: {
       findFirstAlbum: {
@@ -29,11 +33,12 @@ export const loader = async ({ params, context }: LoaderArgs) => {
         },
         id: true,
         artist: {
+          id: true,
           name: true,
         },
         genre: {
-          name: true,
           id: true,
+          name: true,
         },
         members: true,
         year: true,
@@ -41,6 +46,24 @@ export const loader = async ({ params, context }: LoaderArgs) => {
         name: true,
       },
       findManyGenre: {
+        __args: {
+          orderBy: [
+            {
+              name: "asc",
+            },
+          ]
+        },
+        id: true,
+        name: true,
+      },
+      findManyArtist: {
+        __args: {
+          orderBy: [
+            {
+              name: "asc",
+            },
+          ]
+        },
         id: true,
         name: true,
       },
@@ -53,6 +76,7 @@ export const loader = async ({ params, context }: LoaderArgs) => {
 
   return {
     genres,
+    artists,
     id: params.id,
     album,
   };
@@ -68,8 +92,7 @@ export const action = async ({ request, context }: ActionArgs) =>
   });
 
 export default function AlbumUpdate() {
-  const { genres, id, album } = useLoaderData<typeof loader>();
-
+  const { genres, artists, id, album } = useLoaderData<typeof loader>();
   const fetcher = useFetcher();
 
   return (
@@ -79,15 +102,23 @@ export default function AlbumUpdate() {
         className="space-y-4 w-full max-w-2xl"
         method="post"
         options={{
-          genres: genres.map((artist) => ({
+          artists: artists.map((artist) => ({
             name: artist.name,
             value: artist.id,
+          })),
+          genres: genres.map((genre) => ({
+            name: genre.name,
+            value: genre.id,
+          })),
+          years: years.map((year) => ({
+            name: year,
+            value: year,
           })),
         }}
         values={{
           name: album.name,
-          artist: album.artist.name,
-          genres: album.genre.id,
+          artist: album.artist.id,
+          genre: album.genre.id,
           year: album.year,
           recordLabel: album.label,
         }}
@@ -96,17 +127,19 @@ export default function AlbumUpdate() {
           return (
             <Fragment>
               <Field name="name" label="Name" />
-              <Field name="genres" hidden />
-              <Field name="artist" />
-              <Field name="genres" label="Genre">
-                {({ options, label, Label, Error, value }) => (
+              <Field name="artist" hidden />
+              <Field name="genre" hidden />
+              <Field name="year" hidden />
+              <Field name="artists" label="Artist">
+                {({ options, Label, Error }) => (
                   <Fragment>
                     <Label />
-                    <SelectInput
-                      label={label}
+                    <ComboboxInput
+                      label={`Artist`}
+                      value={album.artist.id}
                       options={options}
                       setValueChange={(value) =>
-                        setValue("genres", value, {
+                        setValue("artist", value, {
                           shouldValidate: false,
                           shouldDirty: false,
                           shouldTouch: false,
@@ -117,7 +150,46 @@ export default function AlbumUpdate() {
                   </Fragment>
                 )}
               </Field>
-              <Field name="year" label="Release Year" />
+              <Field name="genres" label="Genre">
+                {({ options, Label, Error }) => (
+                  <Fragment>
+                    <Label />
+                    <SelectInput
+                      label={`Genre`}
+                      value={album.genre.id}
+                      options={options}
+                      setValueChange={(value) => 
+                        setValue("genre", value, {
+                          shouldValidate: false,
+                          shouldDirty: false,
+                          shouldTouch: false,
+                        })
+                      }
+                    />
+                    <Error />
+                  </Fragment>
+                )}
+              </Field>
+              <Field name="years" label="Release Year">
+                {({ options, Label, Error }) => (
+                  <Fragment>
+                    <Label />
+                    <SelectInput
+                      label={`Year`}
+                      value={String(album.year)}
+                      options={options}
+                      setValueChange={(value) => 
+                        setValue("year", Number(value), {
+                          shouldValidate: false,
+                          shouldDirty: false,
+                          shouldTouch: false,
+                        })
+                      }
+                    />
+                    <Error />
+                  </Fragment>
+                )}
+              </Field>
               <Field name="recordLabel" label="Record Label" />
               <Errors />
               <Button
