@@ -2,6 +2,8 @@ import type { LoaderArgs } from "@remix-run/cloudflare";
 import { useLoaderData } from "@remix-run/react";
 
 import { YearCombobox } from "~/components/years";
+import { RecordsCombobox } from "~/components/records";
+import { Separator } from "~/components/ui/separator"
 import { MovieCard } from "~/components/movies/MovieCard";
 import { AlbumCard } from "~/components/music/AlbumCard";
 
@@ -11,7 +13,8 @@ import { MovieFragment } from "~/graphql/Movies/fragments.server";
 
 export const loader = async ({ request, context }: LoaderArgs) => {
   const url = new URL(request.url);
-  const year = url.searchParams.get("year") || "1990";
+  const records = url.searchParams.get("records") || undefined;
+  const year = url.searchParams.get("year") || undefined;
   const client = getClient(context);
   const {
     music: { findManyAlbum },
@@ -20,10 +23,13 @@ export const loader = async ({ request, context }: LoaderArgs) => {
     music: {
       findManyAlbum: {
         __args: {
+          take: records ? parseInt(records) : undefined,
           where: {
-            year: {
-              equals: parseInt(year),
-            },
+            year: year
+              ? {
+                  equals: parseInt(year),
+                }
+              : undefined,
           },
           orderBy: [
             {
@@ -37,10 +43,13 @@ export const loader = async ({ request, context }: LoaderArgs) => {
     movies: {
       findManyMovie: {
         __args: {
+          take: records ? parseInt(records) : undefined,
           where: {
-            year: {
-              equals: parseInt(year),
-            },
+            year: year
+              ? {
+                  equals: parseInt(year),
+                }
+              : undefined,
           },
           orderBy: [
             {
@@ -53,21 +62,23 @@ export const loader = async ({ request, context }: LoaderArgs) => {
     },
   });
 
-  return { year, movies: findManyMovie, albums: findManyAlbum };
+  return { records, year, movies: findManyMovie, albums: findManyAlbum };
 };
 
 export default function Index() {
-  const { year, movies, albums } = useLoaderData<typeof loader>();
+  const { records, year, movies, albums } = useLoaderData<typeof loader>();
 
   return (
     <div className="flex flex-col justify-center w-full py-4">
-      <h1 className="text-2xl">Remix</h1>
+      <h1 className="text-2xl">All</h1>
       <section className="w-full max-w-7xl">
         <div className="mb-4 flex gap-4 px-4">
+        <p className="text-2xl font-bold">Take:</p>
+          <RecordsCombobox value={records} allowEmpty />
           <p className="ml-auto text-2xl font-bold">Filter by year:</p>
-          <YearCombobox value={year} />
+          <YearCombobox value={year} allowEmpty />
         </div>
-        <p className="ml-auto text-2xl font-bold">Music:</p>
+        <p className="ml-auto text-2xl font-bold">{`Music: ${albums.length} of ${records?records:albums.length}`}</p>
         <ul className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {albums && albums.length > 0 ? (
             albums.map((album) => (
@@ -79,8 +90,8 @@ export default function Index() {
             <p className="text-2xl font-bold">No albums found</p>
           )}
         </ul>
-        <hr />
-        <p className="ml-auto text-2xl font-bold">Movies:</p>
+        <Separator className="my-4" />
+        <p className="ml-auto text-2xl font-bold">{`Movies: ${movies.length} of ${records?records:movies.length}`}</p>
         <ul className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {movies && movies.length > 0 ? (
             movies.map((movie) => (

@@ -1,13 +1,8 @@
 import { Button } from "~/components/ui/button";
 import {
-  LayoutGrid,
   Library,
-  ListMusic,
   Mic2,
-  Music2,
-  PlayCircle,
-  Radio,
-  User,
+  Disc,
   CameraIcon,
   LucideTv,
 } from "lucide-react";
@@ -21,7 +16,7 @@ export function Navbar() {
       <div className="space-y-4 py-4">
       <div className="px-4 py-2">
           <h2 className="mb-2 px-2 text-lg font-semibold tracking-tight">
-            Remix
+            All
           </h2>
           <ul className="space-y-1">
             <li>
@@ -33,7 +28,7 @@ export function Navbar() {
               >
                 <Link to={"/"}>
                   <Library className="mr-2 h-4 w-4" />
-                  Remix List
+                  All (Music + Movies)
                 </Link>
               </Button>
             </li>
@@ -52,7 +47,7 @@ export function Navbar() {
                 asChild
               >
                 <Link to={"/music"}>
-                  <Library className="mr-2 h-4 w-4" />
+                  <Disc className="mr-2 h-4 w-4" />
                   Music List
                 </Link>
               </Button>
