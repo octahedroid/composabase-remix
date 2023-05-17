@@ -21,7 +21,7 @@ interface Props {
     id: string;
     name: string;
   }[];
-  value: string | null;
+  value?: string | null;
 }
 
 export function GenreCombobox({ items, value }: Props) {

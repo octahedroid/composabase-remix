@@ -33,6 +33,9 @@ export const loader = async ({ request, context }: LoaderArgs) => {
           },
           orderBy: [
             {
+              year: "asc",
+            },
+            {
               name: "asc",
             }
           ],
@@ -52,6 +55,9 @@ export const loader = async ({ request, context }: LoaderArgs) => {
               : undefined,
           },
           orderBy: [
+            {
+              year: "asc",
+            },
             {
               title: "asc",
             }
