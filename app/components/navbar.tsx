@@ -52,7 +52,7 @@ export function Navbar() {
                 </Link>
               </Button>
             </li>
-            <li>
+            {/* <li>
               <Button
                 variant={pathname === "/music/add" ? "secondary" : "ghost"}
                 size="sm"
@@ -64,7 +64,7 @@ export function Navbar() {
                   Add Album
                 </Link>
               </Button>
-            </li>
+            </li> */}
           </ul>
         </div>
         <div className="px-4 py-2">
@@ -85,9 +85,7 @@ export function Navbar() {
                 </Link>
               </Button>
             </li>
-          </ul>
-          <ul className="space-y-1">
-            <li>
+            {/* <li>
               <Button
                 variant={pathname === "/movies/add" ? "secondary" : "ghost"}
                 size="sm"
@@ -99,7 +97,7 @@ export function Navbar() {
                   Add Movie
                 </Link>
               </Button>
-            </li>
+            </li> */}
           </ul>
         </div>
       </div>

@@ -17,11 +17,11 @@ import {
 import { useSearchParams } from "@remix-run/react";
 
 interface Props {
-  value?: string;
+  value?: number;
   allowEmpty?: boolean;
 }
 
-export function RecordsCombobox({ value, allowEmpty = false }: Props) {
+export function TakeCombobox({ value, allowEmpty = false }: Props) {
   const [open, setOpen] = React.useState(false);
   const [, setSearchParams] = useSearchParams();
   const records = ["3" ,"6", "9", "12", "15", "18", "21", "24", "27", "30", "33"];
@@ -35,7 +35,7 @@ export function RecordsCombobox({ value, allowEmpty = false }: Props) {
           aria-expanded={open}
           className="w-[200px] justify-between"
         >
-          {value ? records.find((item) => item === value) : `Select records...`}
+          {value ? records.find((item) => item === value.toString()) : `Select records...`}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -48,7 +48,7 @@ export function RecordsCombobox({ value, allowEmpty = false }: Props) {
                 value={""}
                 onSelect={() => {
                   setSearchParams((params: URLSearchParams) => {
-                    params.delete('records');
+                    params.delete('take');
                     return params;
                   });
                   setOpen(false);
@@ -71,7 +71,7 @@ export function RecordsCombobox({ value, allowEmpty = false }: Props) {
                 onSelect={(currentValue) => {
                   const parameter = encodeURIComponent(currentValue);
                   setSearchParams((params: URLSearchParams) => {
-                    params.set("records", parameter);
+                    params.set("take", parameter);
                     return params;
                   });
                   setOpen(false);
