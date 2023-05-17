@@ -16,10 +16,10 @@ export const meta: V2_MetaFunction = () => {
 export const loader = async ({ context, request }: LoaderArgs) => {
   const client = getClient(context);
   const url = new URL(request.url);
-  const year = url.searchParams.get("year") || null;
+  const year = url.searchParams.get("year") || undefined;
   const genre = url.searchParams.has("genre")
     ? url.searchParams.get("genre")
-    : null;
+    : undefined;
 
   const {
     movies: { findManyGenre, findManyMovie },
