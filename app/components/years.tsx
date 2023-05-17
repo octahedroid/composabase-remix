@@ -17,7 +17,7 @@ import {
 import { useSearchParams } from "@remix-run/react";
 
 interface Props {
-  value?: string;
+  value?: number;
   allowEmpty?: boolean;
 }
 
@@ -35,7 +35,7 @@ export function YearCombobox({ value, allowEmpty = false }: Props) {
           aria-expanded={open}
           className="w-[200px] justify-between"
         >
-          {value ? years.find((item) => item === value) : `Select year...`}
+          {value ? years.find((item) => item === value.toString()) : `Select year...`}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>

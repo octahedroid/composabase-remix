@@ -16,11 +16,8 @@ export const meta: V2_MetaFunction = () => {
 export const loader = async ({ context, request }: LoaderArgs) => {
   const client = getClient(context);
   const url = new URL(request.url);
-  const year = url.searchParams.get("year") || undefined;
-  const genre = url.searchParams.has("genre")
-    ? url.searchParams.get("genre")
-    : undefined;
-
+  const year = url.searchParams.has("year") ? parseInt(url.searchParams.get("year") as string) : undefined;
+  const genre = url.searchParams.has("genre") ? url.searchParams.get("genre") : undefined;
   const {
     movies: { findManyGenre, findManyMovie },
   } = await client.query({
@@ -47,18 +44,14 @@ export const loader = async ({ context, request }: LoaderArgs) => {
             },
           ],
           where: {
-            year: year
-              ? {
-                  equals: parseInt(year),
-                }
-              : undefined,
-            genre: genre
-              ? {
-                  id: {
-                    equals: genre,
-                  },
-                }
-              : undefined,
+            year: {
+              equals:year,
+            },
+            genre: {
+              id: {
+                equals: genre,
+              },
+            },
           },
         },
         ...MovieFragment,
