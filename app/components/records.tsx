@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 
-import { cn, years } from "~/lib/utils";
+import { cn } from "~/lib/utils";
 import { Button } from "~/components/ui/button";
 import {
   Command,
@@ -21,10 +21,10 @@ interface Props {
   allowEmpty?: boolean;
 }
 
-export function YearCombobox({ value, allowEmpty = false }: Props) {
-
+export function RecordsCombobox({ value, allowEmpty = false }: Props) {
   const [open, setOpen] = React.useState(false);
   const [, setSearchParams] = useSearchParams();
+  const records = ["3" ,"6", "9", "12", "15", "18", "21", "24", "27", "30", "33"];
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -35,7 +35,7 @@ export function YearCombobox({ value, allowEmpty = false }: Props) {
           aria-expanded={open}
           className="w-[200px] justify-between"
         >
-          {value ? years.find((item) => item === value) : `Select year...`}
+          {value ? records.find((item) => item === value) : `Select records...`}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -48,7 +48,7 @@ export function YearCombobox({ value, allowEmpty = false }: Props) {
                 value={""}
                 onSelect={() => {
                   setSearchParams((params: URLSearchParams) => {
-                    params.delete('year');
+                    params.delete('records');
                     return params;
                   });
                   setOpen(false);
@@ -64,14 +64,14 @@ export function YearCombobox({ value, allowEmpty = false }: Props) {
               </CommandItem>
             }
 
-            {years.map((item) => (
+            {records.map((item) => (
               <CommandItem
                 key={item}
                 value={item}
                 onSelect={(currentValue) => {
                   const parameter = encodeURIComponent(currentValue);
                   setSearchParams((params: URLSearchParams) => {
-                    params.set("year", parameter);
+                    params.set("records", parameter);
                     return params;
                   });
                   setOpen(false);
